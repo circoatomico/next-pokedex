@@ -1,6 +1,16 @@
 import Image from 'next/image'
-
 import styles from '../../styles/Pokemon.module.css'
+import {useRouter} from 'next/router'
+
+
+// O Fallback cria o pre render
+// VC cria o pre-render com a funcao getStaticPaths
+// no caso abaixo, o next vai pre-renderizar todos os pokemons até o id 251
+// Caso o param Fallback seja false, não será possível buscar outros ids acima do 251
+// Caso o params fallbak seja true, você pode buscar outros ids, é só adicionar um if como:
+// if (router.isFallback) {  return <div>Carregando...</div> }
+// coloque esse if dentro do seu elemento para tratar casos que não sao de pre render
+
 
 export const getStaticPaths = async() => {
 
@@ -22,7 +32,7 @@ export const getStaticPaths = async() => {
 
   return {
     paths,
-    fallback: false
+    fallback: true
   }
 
 }
@@ -42,6 +52,12 @@ export const getStaticProps = async(context) => {
 }
 
 export default function Pokemon({ pokemon }) {
+
+  const router = useRouter()
+
+  if (router.isFallback) {
+    return <div>Carregando...</div>
+  }
 
   return (
     <div className={styles.pokemon_container}>
